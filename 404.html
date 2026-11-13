@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Steward Quant Workbench: 멀티에셋 자산배분 및 리밸런서</title>
+  <meta name="description" content="국내주식, 미국주식, 디지털자산을 변동성 관리와 회귀샤프, 카나리아 방어 모델로 통합 설계하는 스튜어드 멀티에셋 워크벤치입니다." />
+  <meta name="theme-color" content="#f7f5f0" />
+  <meta property="og:title" content="Steward Quant Workbench: 3대 자산 통합 리밸런싱" />
+  <meta property="og:description" content="4년 시점고정 백테스트 검증 기반 멀티에셋 비중 설계 및 온주 리밸런싱 주문서 생성기" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://quant.testers.run/" />
+  <link rel="canonical" href="https://quant.testers.run/" />
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" />
+  <script>
+    (function () {
+      try {
+        var saved = localStorage.getItem('steward_theme_grade');
+        if (saved === 'dark' || saved === 'light') {
+          document.documentElement.setAttribute('data-theme', saved);
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#viewContainer">본문으로 건너뛰기</a>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="워크스페이스 및 메뉴">
+      <div class="brand-row">
+        <a class="brand-logo" href="./" aria-label="Steward Quant 홈">
+          <img src="./favicon.svg" width="28" height="28" alt="" />
+          <div>
+            <div class="brand-title">Steward Quant</div>
+            <div class="brand-sub">멀티에셋 배분 워크벤치</div>
+          </div>
+        </a>
+      </div>
+
+      <div class="ws-switcher-card">
+        <div class="ws-select-row">
+          <select id="wsSelect" class="ws-select" aria-label="워크스페이스 선택"></select>
+          <button type="button" id="btnNewWs" class="btn btn-sm" aria-label="새 포트폴리오 추가">+</button>
+        </div>
+        <div class="ws-meta-row">
+          <span id="wsNetWorthMini" class="mono">0원</span>
+          <span id="cloudBadge">로컬 저장됨</span>
+        </div>
+      </div>
+
+      <nav class="nav-list" aria-label="주 메뉴">
+        <button type="button" class="nav-btn active" data-view="overview">
+          <span class="nav-btn-left">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+            <span>통합 자산 홈</span>
+          </span>
+          <span id="navActionBadge" class="nav-badge">0</span>
+        </button>
+        <button type="button" class="nav-btn" data-view="portfolio">
+          <span class="nav-btn-left">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"/></svg>
+            <span>내 자산 및 리밸런서</span>
+          </span>
+        </button>
+        <button type="button" class="nav-btn" data-view="signals">
+          <span class="nav-btn-left">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/></svg>
+            <span>시그널 및 팩터 레이더</span>
+          </span>
+        </button>
+        <button type="button" class="nav-btn" data-view="lab">
+          <span class="nav-btn-left">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 17l5-5 4 4 8-9"/><path d="M16 7h4v4"/></svg>
+            <span>적립식 백테스트 연구소</span>
+          </span>
+        </button>
+        <button type="button" class="nav-btn" data-view="connect">
+          <span class="nav-btn-left">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 3v12m0 0l-4-4m4 4l4-4"/><path d="M4 19h16"/></svg>
+            <span>클라우드 및 실계좌 검증</span>
+          </span>
+        </button>
+        <a class="nav-btn nav-link-ext" href="./ontology.html">
+          <span class="nav-btn-left">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="12" cy="18" r="2.5"/><path d="M8 7.5l3 8M16 7.5l-3 8M8.5 6h7"/></svg>
+            <span>거시 및 뉴스 온톨로지</span>
+          </span>
+          <span class="nav-badge nav-badge-subtle">실시간</span>
+        </a>
+        <a class="nav-btn nav-link-ext" href="https://crypto.steward-ai.kr/">
+          <span class="nav-btn-left">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 14l3-3 3 2 4-4"/></svg>
+            <span>실시간 운용 원장</span>
+          </span>
+        </a>
+      </nav>
+
+      <div class="sidebar-spacer"></div>
+
+      <div class="session-box">
+        <div class="session-head">3대 시장 실시간 세션</div>
+        <div class="session-item">
+          <span>국내주식 (KRX)</span>
+          <span id="sessKr" class="status-pill status-closed">확인 중</span>
+        </div>
+        <div class="session-item">
+          <span>미국주식 (US)</span>
+          <span id="sessUs" class="status-pill status-closed">확인 중</span>
+        </div>
+        <div class="session-item">
+          <span>디지털자산 (24시간)</span>
+          <span id="sessCr" class="status-pill status-open">상시 가동</span>
+        </div>
+        <div class="fx-row">
+          <span>기준 환율</span>
+          <strong id="fxReadout" class="mono">₩1,345.0/$</strong>
+        </div>
+      </div>
+    </aside>
+
+    <div class="main-col">
+      <header class="topbar">
+        <div class="topbar-left">
+          <h1 id="pageHeading" class="page-heading">통합 자산 홈</h1>
+          <div class="sync-indicator">
+            <span id="feedSyncText">시세 연결 중…</span>
+            <button type="button" id="btnRefreshFeed" class="btn btn-sm">갱신</button>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <button type="button" id="btnCmdPalette" class="cmd-trigger" aria-label="종목 및 명령어 빠른 검색">
+            <svg class="cmd-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+            <span class="cmd-label">종목, 명령어 검색…</span>
+            <span class="kbd">⌘K</span>
+          </button>
+
+          <div class="seg-group" role="group" aria-label="표시 통화 전환">
+            <button type="button" class="seg-btn active" data-currency="KRW">₩ KRW</button>
+            <button type="button" class="seg-btn" data-currency="USD">$ USD</button>
+          </div>
+
+          <button type="button" id="btnThemeToggle" class="btn btn-sm" aria-label="테마 전환">다크</button>
+          <button type="button" id="btnOpenAuth" class="btn btn-sm">클라우드 동기화</button>
+        </div>
+      </header>
+
+      <main id="viewContainer" class="view-container"></main>
+    </div>
+  </div>
+
+  <nav class="mobile-tabbar" aria-label="모바일 하단 메뉴">
+    <button type="button" class="mob-tab active" data-view="overview"><span>자산홈</span></button>
+    <button type="button" class="mob-tab" data-view="portfolio"><span>내자산</span></button>
+    <button type="button" class="mob-tab" data-view="signals"><span>시그널</span></button>
+    <button type="button" class="mob-tab" data-view="lab"><span>백테스트</span></button>
+    <button type="button" class="mob-tab" data-view="connect"><span>동기화</span></button>
+  </nav>
+
+  <div id="dossierBackdrop" class="backdrop drawer-backdrop">
+    <aside id="dossierDrawer" class="drawer" role="dialog" aria-label="종목 131팩터 상세 분석"></aside>
+  </div>
+
+  <div id="presetBackdrop" class="backdrop">
+    <div id="presetModal" class="modal" role="dialog" aria-label="포트폴리오 템플릿 선택"></div>
+  </div>
+
+  <div id="authBackdrop" class="backdrop">
+    <div id="authModal" class="modal" role="dialog" aria-label="클라우드 계정 동기화"></div>
+  </div>
+
+  <div id="customDialogBackdrop" class="backdrop">
+    <div id="customDialogModal" class="modal" role="dialog" aria-label="보유 종목 입력"></div>
+  </div>
+
+  <div id="cmdBackdrop" class="backdrop">
+    <div class="modal cmd-modal" role="dialog" aria-label="빠른 검색">
+      <label class="sr-only" for="cmdInput">티커 또는 메뉴 검색</label>
+      <input id="cmdInput" class="cmd-input" name="cmdQuery" type="search" placeholder="티커(SSO, 272580, BTC…), 메뉴 이동, 프리셋, 통화 전환 검색" autocomplete="off" />
+      <div id="cmdResults" class="cmd-results"></div>
+    </div>
+  </div>
+
+  <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+  <script src="./config.js"></script>
+  <script src="./engine.js"></script>
+  <script src="./charts.js"></script>
+  <script src="./cloud-sync.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>

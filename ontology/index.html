@@ -1,0 +1,1536 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Steward v5.4 글로벌 거시 · 온톨로지 결정 뷰</title>
+  <meta name="description" content="8대 글로벌 외환·원자재 추세와 뉴스 벡터DB, 인과 온톨로지 그래프를 결합한 스튜어드 거시 의사결정 데스크입니다." />
+  <meta name="theme-color" content="#f7f5f0" />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" />
+  <script>
+    (function () {
+      try {
+        var saved = localStorage.getItem('steward_theme_grade');
+        if (saved === 'dark' || saved === 'light') {
+          document.documentElement.setAttribute('data-theme', saved);
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <style>
+    /* Hallmark · shape: app screen · genre: modern-minimal · theme: Archival Ledger · posture: restrained · nav: masthead · footer: ledger-foot · v2.0.0
+     * critique: asymmetric 5/7 macro thesis + hairline 8-axis tape + 4/8 causal workbench (<ol> counter) + 5/7 walk-forward proof */
+    :root {
+      --color-paper: oklch(97.6% 0.006 82);
+      --color-paper-2: oklch(94.8% 0.008 82);
+      --color-paper-3: oklch(91.6% 0.010 82);
+      --color-ink: oklch(18.5% 0.012 78);
+      --color-ink-2: oklch(34% 0.012 78);
+      --color-muted: oklch(46% 0.012 78);
+      --color-rule: oklch(18.5% 0.012 78 / 0.12);
+      --color-rule-strong: oklch(18.5% 0.012 78 / 0.24);
+      --color-accent: oklch(42% 0.115 160);
+      --color-accent-ink: oklch(98% 0.005 160);
+      --color-accent-soft: oklch(42% 0.115 160 / 0.10);
+      --color-focus: oklch(44% 0.145 160);
+      --color-up: oklch(40% 0.115 160);
+      --color-up-soft: oklch(40% 0.115 160 / 0.10);
+      --color-down: oklch(46% 0.155 26);
+      --color-down-soft: oklch(46% 0.155 26 / 0.10);
+      --color-warn: oklch(49% 0.115 72);
+      --color-warn-soft: oklch(49% 0.115 72 / 0.12);
+
+      --font-display: 'Space Grotesk', 'SUIT Variable', system-ui, sans-serif;
+      --font-sans: 'SUIT Variable', system-ui, sans-serif;
+      --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+      --space-2xs: 4px;
+      --space-xs: 8px;
+      --space-sm: 12px;
+      --space-md: 16px;
+      --space-lg: 24px;
+      --space-xl: 32px;
+      --space-2xl: 48px;
+      --space-3xl: 64px;
+
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+      --dur-micro: 120ms;
+    }
+
+    [data-theme="dark"] {
+      --color-paper: oklch(15.2% 0.007 78);
+      --color-paper-2: oklch(19.2% 0.008 78);
+      --color-paper-3: oklch(23.5% 0.010 78);
+      --color-ink: oklch(93.5% 0.006 82);
+      --color-ink-2: oklch(79% 0.008 82);
+      --color-muted: oklch(66% 0.010 82);
+      --color-rule: oklch(93.5% 0.006 82 / 0.12);
+      --color-rule-strong: oklch(93.5% 0.006 82 / 0.24);
+      --color-accent: oklch(73% 0.125 160);
+      --color-accent-ink: oklch(15.2% 0.015 160);
+      --color-accent-soft: oklch(73% 0.125 160 / 0.14);
+      --color-focus: oklch(75% 0.14 160);
+      --color-up: oklch(73% 0.125 160);
+      --color-up-soft: oklch(73% 0.125 160 / 0.14);
+      --color-down: oklch(70% 0.155 26);
+      --color-down-soft: oklch(70% 0.155 26 / 0.14);
+      --color-warn: oklch(76% 0.125 76);
+      --color-warn-soft: oklch(76% 0.125 76 / 0.14);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      overflow-x: clip;
+      background: var(--color-paper);
+      color: var(--color-ink);
+      font-family: var(--font-sans);
+      font-size: 16px;
+      line-height: 1.55;
+      word-break: keep-all;
+      font-synthesis: none;
+      -webkit-font-smoothing: antialiased;
+      scrollbar-color: var(--color-rule-strong) var(--color-paper);
+    }
+
+    ::selection {
+      background: var(--color-accent-soft);
+      color: var(--color-ink);
+    }
+
+    h1, h2, h3 {
+      font-family: var(--font-display);
+      font-weight: 600;
+      letter-spacing: -0.025em;
+      line-height: 1.18;
+      text-wrap: balance;
+      color: var(--color-ink);
+    }
+
+    p {
+      text-wrap: pretty;
+    }
+
+    a, button {
+      color: inherit;
+      font: inherit;
+    }
+
+    a:focus-visible,
+    button:focus-visible {
+      outline: 2px solid var(--color-focus);
+      outline-offset: 2px;
+    }
+
+    button {
+      background: none;
+      border: 1px solid var(--color-rule);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-out);
+    }
+
+    button:hover {
+      background: var(--color-paper-2);
+      border-color: var(--color-rule-strong);
+    }
+
+    button:active {
+      transform: translateY(1px);
+    }
+
+    button:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .skip-link {
+      position: absolute;
+      top: -96px;
+      left: var(--space-lg);
+      z-index: 400;
+      padding: var(--space-xs) var(--space-md);
+      background: var(--color-accent);
+      color: var(--color-accent-ink);
+      border-radius: var(--radius-sm);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .skip-link:focus-visible {
+      top: var(--space-sm);
+    }
+
+    .mono {
+      font-family: var(--font-mono);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .pos { color: var(--color-up); }
+    .neg { color: var(--color-down); }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 var(--space-lg);
+    }
+
+    /* ── Masthead ── */
+    .masthead {
+      border-bottom: 1px solid var(--color-rule);
+      background: var(--color-paper);
+      color: var(--color-ink);
+    }
+
+    .masthead-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+      min-height: 64px;
+      padding-top: var(--space-xs);
+      padding-bottom: var(--space-xs);
+      flex-wrap: wrap;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: var(--space-lg);
+      flex-wrap: wrap;
+    }
+
+    .brand-mark {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-xs);
+      text-decoration: none;
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+    }
+
+    .brand-mark svg {
+      width: 20px;
+      height: 20px;
+      color: var(--color-accent);
+      flex-shrink: 0;
+    }
+
+    .site-nav {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      overflow-x: auto;
+    }
+
+    .site-nav a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 36px;
+      padding: var(--space-2xs) 0;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--color-muted);
+      text-decoration: none;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+      transition: color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out);
+    }
+
+    .site-nav a:hover {
+      color: var(--color-ink);
+    }
+
+    .site-nav a[aria-current="page"] {
+      color: var(--color-ink);
+      border-bottom-color: var(--color-accent);
+    }
+
+    .masthead-meta {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+      flex-wrap: wrap;
+    }
+
+    .sync-label {
+      font-size: 13px;
+      color: var(--color-muted);
+    }
+
+    .countdown-chip {
+      font-size: 12px;
+      padding: var(--space-2xs) var(--space-xs);
+      background: var(--color-paper-2);
+      color: var(--color-ink-2);
+      border-radius: var(--radius-sm);
+    }
+
+    .ctrl-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-xs);
+      min-height: 36px;
+      padding: 0 var(--space-sm);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--color-ink-2);
+    }
+
+    .ctrl-btn svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+
+    /* ── Main Desk Sections ── */
+    main {
+      padding-top: var(--space-xl);
+      padding-bottom: var(--space-3xl);
+    }
+
+    .desk-section {
+      padding-top: var(--space-xl);
+      padding-bottom: var(--space-xl);
+      border-bottom: 1px solid var(--color-rule);
+    }
+
+    .desk-section:first-child {
+      padding-top: 0;
+    }
+
+    .desk-section:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: var(--space-md);
+      margin-bottom: var(--space-lg);
+      flex-wrap: wrap;
+    }
+
+    .section-head h2 {
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .section-note {
+      font-size: 14px;
+      color: var(--color-muted);
+    }
+
+    /* ── 1. Asymmetric 5/7 Macro Thesis & 3-Book Conviction Stage ── */
+    .regime-stage {
+      display: grid;
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      gap: var(--space-xl);
+      align-items: start;
+    }
+
+    .regime-copy h1 {
+      font-size: 16px;
+      font-family: var(--font-sans);
+      font-weight: 500;
+      color: var(--color-muted);
+    }
+
+    .regime-headline {
+      font-family: var(--font-display);
+      font-size: clamp(1.65rem, 2.7vw, 2.2rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.22;
+      margin-top: var(--space-xs);
+      color: var(--color-ink);
+      overflow-wrap: break-word;
+      text-wrap: balance;
+    }
+
+    .regime-meta-line {
+      margin-top: var(--space-xs);
+      font-size: 13px;
+      color: var(--color-muted);
+      font-weight: 500;
+    }
+
+    .regime-prose {
+      margin-top: var(--space-md);
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--color-ink-2);
+      max-width: 58ch;
+    }
+
+    .telemetry-dl {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-md);
+      margin-top: var(--space-lg);
+      padding-top: var(--space-md);
+      border-top: 1px solid var(--color-rule);
+    }
+
+    .telemetry-dl dt {
+      font-size: 13px;
+      color: var(--color-muted);
+      font-weight: 500;
+    }
+
+    .telemetry-dl dd {
+      margin-top: var(--space-2xs);
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--color-ink);
+    }
+
+    .conviction-well {
+      background: var(--color-paper-2);
+      color: var(--color-ink);
+      border-radius: var(--radius-md);
+      padding: var(--space-lg);
+    }
+
+    .well-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: var(--space-sm);
+      padding-bottom: var(--space-sm);
+      border-bottom: 1px solid var(--color-rule);
+      margin-bottom: var(--space-xs);
+    }
+
+    .well-header h2 {
+      font-size: 16px;
+      font-family: var(--font-sans);
+      font-weight: 600;
+    }
+
+    .book-list {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .book-row {
+      width: 100%;
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) auto;
+      gap: var(--space-md);
+      align-items: center;
+      text-align: left;
+      padding: var(--space-md) var(--space-sm);
+      border: none;
+      border-bottom: 1px solid var(--color-rule);
+      border-radius: 0;
+      background: transparent;
+    }
+
+    .book-row:last-child {
+      border-bottom: none;
+    }
+
+    .book-row:hover {
+      background: var(--color-paper-3);
+    }
+
+    .book-row[aria-pressed="true"] {
+      background: var(--color-paper);
+      box-shadow: inset 2px 0 0 var(--color-accent);
+    }
+
+    .book-cat {
+      font-size: 13px;
+      color: var(--color-muted);
+      font-weight: 500;
+    }
+
+    .book-asset {
+      font-size: 16px;
+      font-weight: 600;
+      margin-top: 2px;
+      color: var(--color-ink);
+    }
+
+    .book-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: var(--space-2xs);
+    }
+
+    .stance-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-xs);
+      padding: var(--space-2xs) var(--space-xs);
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .stance-swatch {
+      width: 6px;
+      height: 6px;
+      border-radius: 1px;
+      display: inline-block;
+    }
+
+    .stance-buy {
+      background: var(--color-up-soft);
+      color: var(--color-up);
+    }
+    .stance-buy .stance-swatch { background: var(--color-up); }
+
+    .stance-veto {
+      background: var(--color-down-soft);
+      color: var(--color-down);
+    }
+    .stance-veto .stance-swatch { background: var(--color-down); }
+
+    .stance-wait {
+      background: var(--color-warn-soft);
+      color: var(--color-warn);
+    }
+    .stance-wait .stance-swatch { background: var(--color-warn); }
+
+    .book-metrics {
+      font-size: 12px;
+      color: var(--color-muted);
+    }
+
+    /* ── 2. 8-Axis Hairline Monitor Matrix ── */
+    .monitor-matrix {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      border-top: 1px solid var(--color-rule-strong);
+      border-bottom: 1px solid var(--color-rule);
+    }
+
+    .mon-cell {
+      padding: var(--space-md);
+      border-right: 1px solid var(--color-rule);
+      border-bottom: 1px solid var(--color-rule);
+      min-width: 0;
+    }
+
+    .mon-cell:nth-child(4n) {
+      border-right: none;
+    }
+
+    .mon-cell:nth-child(n+5) {
+      border-bottom: none;
+    }
+
+    .mon-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: var(--space-xs);
+      font-size: 13px;
+      color: var(--color-muted);
+    }
+
+    .mon-value {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-top: var(--space-xs);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .mon-unit {
+      font-family: var(--font-sans);
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--color-muted);
+      margin-left: var(--space-2xs);
+    }
+
+    .mon-status-row {
+      margin-top: var(--space-xs);
+    }
+
+    .mon-driver {
+      margin-top: var(--space-xs);
+      font-size: 13px;
+      color: var(--color-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* ── 3. Asymmetric 4/8 Causal Decision Workbench ── */
+    .causal-workbench {
+      display: grid;
+      grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+      gap: var(--space-xl);
+      align-items: start;
+    }
+
+    .selector-rail {
+      background: var(--color-paper-2);
+      color: var(--color-ink);
+      border-radius: var(--radius-md);
+      padding: var(--space-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+
+    .sym-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-xs);
+    }
+
+    .sym-tab {
+      min-height: 32px;
+      padding: var(--space-2xs) var(--space-sm);
+      font-size: 13px;
+      font-weight: 500;
+      background: var(--color-paper);
+      color: var(--color-ink-2);
+      border: 1px solid var(--color-rule);
+      border-radius: var(--radius-sm);
+    }
+
+    .sym-tab[aria-pressed="true"] {
+      background: var(--color-accent);
+      color: var(--color-accent-ink);
+      border-color: var(--color-accent);
+      font-weight: 600;
+    }
+
+    .verdict-panel {
+      padding-top: var(--space-md);
+      border-top: 1px solid var(--color-rule);
+    }
+
+    .verdict-title {
+      font-size: 18px;
+      font-weight: 700;
+      font-family: var(--font-display);
+      margin-bottom: var(--space-xs);
+    }
+
+    .verdict-dl {
+      margin-top: var(--space-md);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xs);
+      font-size: 14px;
+    }
+
+    .verdict-dl div {
+      display: flex;
+      justify-content: space-between;
+      gap: var(--space-sm);
+      padding-top: var(--space-xs);
+      border-top: 1px solid var(--color-rule);
+    }
+
+    .verdict-dl dt {
+      color: var(--color-muted);
+    }
+
+    .verdict-dl dd {
+      font-weight: 600;
+    }
+
+    .causal-steps {
+      list-style: none;
+      counter-reset: step-counter;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .causal-step {
+      counter-increment: step-counter;
+      padding: var(--space-lg) 0;
+      border-bottom: 1px solid var(--color-rule);
+      display: grid;
+      grid-template-columns: 36px minmax(0, 1fr);
+      gap: var(--space-md);
+    }
+
+    .causal-step:first-child {
+      padding-top: 0;
+    }
+
+    .causal-step:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .causal-step::before {
+      content: "0" counter(step-counter);
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--color-accent);
+      padding-top: 2px;
+    }
+
+    .step-heading {
+      font-size: 16px;
+      font-weight: 600;
+      font-family: var(--font-sans);
+      margin-bottom: var(--space-sm);
+    }
+
+    .evidence-list {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .evidence-row {
+      padding: var(--space-sm) 0;
+      border-top: 1px solid var(--color-rule);
+      font-size: 14px;
+    }
+
+    .evidence-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: var(--space-sm);
+      font-size: 12px;
+      color: var(--color-muted);
+      margin-bottom: var(--space-2xs);
+    }
+
+    .hop-flow {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-xs);
+      margin-top: var(--space-xs);
+    }
+
+    .hop-node {
+      padding: var(--space-xs) var(--space-sm);
+      background: var(--color-paper-2);
+      color: var(--color-ink);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .hop-sep {
+      color: var(--color-muted);
+      font-family: var(--font-mono);
+      font-size: 13px;
+    }
+
+    /* ── 4. Asymmetric 5/7 Narratives & Walk-Forward Proof ── */
+    .research-split {
+      display: grid;
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      gap: var(--space-xl);
+      align-items: start;
+    }
+
+    .cluster-list {
+      display: flex;
+      flex-direction: column;
+      border-top: 1px solid var(--color-rule-strong);
+    }
+
+    .cluster-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: var(--space-md);
+      padding: var(--space-sm) 0;
+      border-bottom: 1px solid var(--color-rule);
+    }
+
+    .cluster-main {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .cluster-title {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .cluster-sample {
+      font-size: 13px;
+      color: var(--color-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-top: 2px;
+    }
+
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    .wf-block {
+      margin-bottom: var(--space-lg);
+    }
+
+    .wf-block:last-child {
+      margin-bottom: 0;
+    }
+
+    .wf-caption {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--color-ink-2);
+      margin-bottom: var(--space-xs);
+    }
+
+    .ledger-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .ledger-table th {
+      text-align: left;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--color-muted);
+      padding: var(--space-xs);
+      border-bottom: 1px solid var(--color-rule-strong);
+      white-space: nowrap;
+    }
+
+    .ledger-table td {
+      padding: var(--space-xs);
+      border-bottom: 1px solid var(--color-rule);
+      vertical-align: middle;
+    }
+
+    .ledger-table th:first-child,
+    .ledger-table td:first-child {
+      padding-left: 0;
+    }
+
+    .ledger-table th:last-child,
+    .ledger-table td:last-child {
+      padding-right: 0;
+    }
+
+    .r-col {
+      text-align: right;
+    }
+
+    .row-featured td {
+      background: var(--color-paper-2);
+      color: var(--color-ink);
+      font-weight: 600;
+    }
+
+    .empty-msg {
+      color: var(--color-muted);
+      font-size: 14px;
+      padding: var(--space-md) 0;
+    }
+
+    /* ── Footer ── */
+    .ledger-foot {
+      border-top: 1px solid var(--color-rule);
+      padding: var(--space-lg) 0 var(--space-2xl);
+      color: var(--color-muted);
+      font-size: 14px;
+    }
+
+    .foot-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+      flex-wrap: wrap;
+    }
+
+    .foot-links {
+      display: flex;
+      align-items: center;
+      gap: var(--space-lg);
+      flex-wrap: wrap;
+    }
+
+    .foot-links a {
+      color: var(--color-ink-2);
+      text-decoration: underline;
+      text-underline-offset: 4px;
+      text-decoration-color: var(--color-rule-strong);
+      transition: color var(--dur-micro) var(--ease-out), text-decoration-color var(--dur-micro) var(--ease-out);
+    }
+
+    .foot-links a:hover {
+      color: var(--color-ink);
+      text-decoration-color: var(--color-accent);
+    }
+
+    @media (max-width: 960px) {
+      .regime-stage,
+      .causal-workbench,
+      .research-split {
+        grid-template-columns: minmax(0, 1fr);
+        gap: var(--space-lg);
+      }
+      .monitor-matrix {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .mon-cell:nth-child(2n) {
+        border-right: none;
+      }
+      .mon-cell:nth-child(n+5) {
+        border-bottom: 1px solid var(--color-rule);
+      }
+      .mon-cell:nth-child(n+7) {
+        border-bottom: none;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .container {
+        padding: 0 var(--space-md);
+      }
+      .monitor-matrix {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .mon-cell {
+        border-right: none;
+        border-bottom: 1px solid var(--color-rule);
+      }
+      .mon-cell:last-child {
+        border-bottom: none;
+      }
+      .book-row {
+        grid-template-columns: minmax(0, 1fr);
+        gap: var(--space-xs);
+      }
+      .book-right {
+        align-items: flex-start;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="masthead">
+    <div class="container masthead-inner">
+      <a class="skip-link" href="#main">본문으로 건너뛰기</a>
+      <div class="brand-group">
+        <a class="brand-mark" id="navHomeBrand" href="/" aria-label="Steward 홈으로 이동">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <rect x="3" y="3" width="18" height="18" rx="3" />
+            <path d="M7 15l3.5-4 3 2.5L17 8" />
+          </svg>
+          <span>Steward</span>
+        </a>
+        <nav class="site-nav" aria-label="주요 화면 이동">
+          <a id="navLedgerLink" href="/">실시간 원장</a>
+          <a href="/ontology" aria-current="page">거시 온톨로지</a>
+          <a id="navQuantLink" href="/quant/">멀티에셋 배분</a>
+          <a id="navDetailLink" href="/detail">엔지니어링 상세</a>
+        </nav>
+      </div>
+      <div class="masthead-meta">
+        <time class="sync-label mono" id="updatedAtLabel">동기화 중…</time>
+        <span class="countdown-chip mono" id="autoRefreshBadge">자동갱신 60s</span>
+        <button type="button" class="ctrl-btn" id="manualRefreshBtn">지금 갱신</button>
+        <button type="button" class="ctrl-btn" id="themeToggleBtn" aria-label="화면 테마 전환">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+            <circle cx="12" cy="12" r="4" />
+            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+          </svg>
+          <span id="themeToggleLabel">다크</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main" class="container">
+    <section class="desk-section" aria-labelledby="regime-heading">
+      <div class="regime-stage">
+        <div class="regime-copy">
+          <h1 id="regime-heading">글로벌 거시 레짐 및 온톨로지 총괄 판단</h1>
+          <div class="regime-headline" id="macroRegimeTitle" aria-live="polite">데이터 동기화 중…</div>
+          <div class="regime-meta-line mono" id="macroRegimeMeta"></div>
+          <p class="regime-prose" id="macroRegimeThesis">
+            달러, 원화, 엔화, 원유, 금, 은, 구리, 천연가스의 시세 흐름과 중앙은행, 지정학, 해운, 기업 실적 뉴스 온톨로지 신호를 종합합니다.
+          </p>
+          <dl class="telemetry-dl" id="systemStatsRow">
+            <div><dt>누적 벡터 문서</dt><dd class="mono">집계 중…</dd></div>
+            <div><dt>과거 복기 표본</dt><dd class="mono">집계 중…</dd></div>
+            <div><dt>수집 주기</dt><dd class="mono">15분 / 45분</dd></div>
+            <div><dt>목표 보유 호흡</dt><dd class="mono">5~25일</dd></div>
+          </dl>
+        </div>
+
+        <div class="conviction-well">
+          <div class="well-header">
+            <h2>3대 자산군 최우선 의사결정</h2>
+            <span class="section-note">항목 선택 시 하단 인과 근거 갱신</span>
+          </div>
+          <div class="book-list" id="topBookDecisions">
+            <p class="empty-msg">자산군별 의사결정 신호를 불러오는 중입니다…</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="desk-section" aria-labelledby="monitor-heading">
+      <div class="section-head">
+        <h2 id="monitor-heading">8대 핵심 외환 및 원자재 선행 모니터</h2>
+        <span class="section-note">시세 추세(38%)와 뉴스 온톨로지 선행 압력(62%) 결합</span>
+      </div>
+      <div class="monitor-matrix" id="globalMonitorGrid">
+        <div class="mon-cell"><p class="empty-msg">글로벌 지표 수신 중…</p></div>
+      </div>
+    </section>
+
+    <section class="desk-section" aria-labelledby="causal-heading">
+      <div class="section-head">
+        <h2 id="causal-heading">종목별 인과 검증 워크벤치</h2>
+        <span class="section-note">원문 뉴스부터 벡터DB 과거 복기와 온톨로지 전파 경로까지 투명 검증</span>
+      </div>
+      <div class="causal-workbench">
+        <div class="selector-rail">
+          <div>
+            <div class="section-note">검토 대상 종목 선택</div>
+            <div class="sym-tabs" id="symbolSelectorTabs"></div>
+          </div>
+          <div class="verdict-panel" id="verdictSummaryBox">
+            <p class="empty-msg">종목을 선택하면 최종 알파 판정이 표시됩니다.</p>
+          </div>
+        </div>
+
+        <ol class="causal-steps" id="decisionFlowBoxes">
+          <li class="causal-step">
+            <div>
+              <h3 class="step-heading">인과 경로 수신 대기</h3>
+              <p class="empty-msg">온톨로지 스냅샷을 동기화하고 있습니다…</p>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="desk-section" aria-labelledby="proof-heading">
+      <div class="section-head">
+        <h2 id="proof-heading">최근 72시간 거시 클러스터 및 시점고정 백테스트 검증</h2>
+        <span class="section-note">미래 정보 누수 0건 기준 워크포워드 성적 대조</span>
+      </div>
+      <div class="research-split">
+        <div>
+          <div class="wf-caption">감지된 주요 글로벌 이벤트 클러스터</div>
+          <div class="cluster-list" id="narrativeList">
+            <p class="empty-msg">테마 클러스터를 불러오는 중입니다…</p>
+          </div>
+        </div>
+        <div id="walkforwardBox">
+          <p class="empty-msg">워크포워드 검증 리포트를 불러오는 중입니다…</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="ledger-foot">
+    <div class="container foot-inner">
+      <span>Steward Macro &amp; Causal Ontology Desk (v5.4)</span>
+      <div class="foot-links">
+        <a id="footLedgerLink" href="/">실시간 운용 원장</a>
+        <a id="footQuantLink" href="/quant/">멀티에셋 배분 워크벤치</a>
+        <a href="https://steward-ai.kr" target="_blank" rel="noopener">Steward 본관</a>
+      </div>
+    </div>
+  </footer>
+
+  <script id="ONTOLOGY_FALLBACK_DATA" type="application/json">{}</script>
+  <script>
+    (function () {
+      const SUPABASE_ONTOLOGY_URL = 'https://hqfcpvszxkvtlabulbec.supabase.co/storage/v1/object/public/steward-crypto-public/ontology-decision-view.json';
+      const SUPABASE_MACRO_HUB_URL = 'https://hqfcpvszxkvtlabulbec.supabase.co/storage/v1/object/public/steward-crypto-public/macro-intelligence-hub.json';
+
+      // Smart relative navigation for quant.testers.run / github.io subdirectories
+      const pathName = location.pathname || '';
+      if (location.hostname === 'quant.testers.run' || pathName.includes('/quant-testers-run') || pathName.includes('/quant/')) {
+        const base = pathName.endsWith('/ontology/') ? '../' : './';
+        document.getElementById('navHomeBrand').href = base;
+        document.getElementById('navQuantLink').href = base;
+        document.getElementById('footQuantLink').href = base;
+        document.getElementById('navLedgerLink').href = 'https://crypto.steward-ai.kr/';
+        document.getElementById('footLedgerLink').href = 'https://crypto.steward-ai.kr/';
+        document.getElementById('navDetailLink').href = 'https://crypto.steward-ai.kr/detail/';
+      }
+
+      function syncThemeButton() {
+        const cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+        const lbl = document.getElementById('themeToggleLabel');
+        if (lbl) lbl.textContent = cur === 'dark' ? '라이트' : '다크';
+      }
+
+      document.getElementById('themeToggleBtn').addEventListener('click', () => {
+        const cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+        const next = cur === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        try { localStorage.setItem('steward_theme_grade', next); } catch (e) {}
+        syncThemeButton();
+      });
+      syncThemeButton();
+
+      let currentState = null;
+      let selectedKey = null;
+
+      const QUADRANT_KO = {
+        GOLDILOCKS_DISINFLATION_BOOM: { short: '골디락스 확장', detail: '성장 확장 · 물가 안정' },
+        REFLATION_CYCLICAL_EXPANSION: { short: '리플레이션 확장', detail: '성장 확장 · 물가 상승' },
+        STAGFLATION_TIGHTENING_SHOCK: { short: '스태그플레이션 경계', detail: '성장 둔화 · 물가 압력' },
+        DEFLATION_CREDIT_CONTRACTION: { short: '신용 수축 국면', detail: '성장 둔화 · 유동성 경색' },
+        WARMING_UP: { short: '거시 워밍업', detail: '초기 지표 동기화' },
+        MACRO_WATCH: { short: '거시 상시 감시', detail: '지표 탐색 중' },
+      };
+
+      const REGIME_KO = {
+        MACRO_LIQUIDITY_EXPANSION: '유동성·성장 대확장',
+        MACRO_CAPITULATION_PIVOT: '패닉 클라이맥스 반전 매수',
+        MACRO_INFLATION_HARD_ASSET: '인플레이션·실물 자산 집중',
+        MACRO_DOLLAR_DEFENSE_CRISIS: '강달러·신용 위기 방어',
+        MACRO_TRANSITION_WAIT: '거시 과도기 · 단기채 관망',
+        SELECTIVE: '선별적 추세 대기',
+      };
+
+      const STANCE_KO = {
+        HIGH_CONVICTION_BUY: { text: '강력 매수 진입', cls: 'stance-buy' },
+        TAILWIND_BOOST: { text: '순풍 비중 가점', cls: 'stance-buy' },
+        TRAP_VETO: { text: '셀더뉴스 함정 차단', cls: 'stance-veto' },
+        RISK_EXIT: { text: '악재 감지 방어', cls: 'stance-veto' },
+        PRICED_IN_SKIP: { text: '선반영 관망', cls: 'stance-wait' },
+        NEUTRAL: { text: '기준 미달 관망', cls: 'stance-wait' },
+      };
+
+      function esc(s) {
+        return String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+      }
+
+      function fmtNum(v, digits = 2) {
+        const n = Number(v);
+        if (!Number.isFinite(n)) return '-';
+        return n.toLocaleString('en-US', { minimumFractionDigits: digits, maximumFractionDigits: digits });
+      }
+
+      async function fetchLatestView() {
+        const host = (window.location && window.location.hostname) || '';
+        const isStaticCloud = host.endsWith('github.io')
+          || host === 'crypto.steward-ai.kr'
+          || host === 'quant.testers.run';
+        const cdnEndpoints = [
+          `${SUPABASE_ONTOLOGY_URL}?t=${Date.now()}`,
+          `${SUPABASE_MACRO_HUB_URL}?t=${Date.now()}`,
+        ];
+        const apiEndpoints = [
+          '/api/ontology-decision',
+          '/v1/news/dashboard-view',
+        ];
+        const endpoints = isStaticCloud
+          ? [...cdnEndpoints, ...apiEndpoints]
+          : [...apiEndpoints, ...cdnEndpoints];
+        for (const url of endpoints) {
+          try {
+            const r = await fetch(url, { cache: 'no-store' });
+            if (!r.ok) continue;
+            const json = await r.json();
+            const view = json.ontologyDecision || json.newsOntologyView || (json.globalMonitors ? json : null);
+            if (view && Array.isArray(view.globalMonitors)) {
+              if (json.walkforwardSummary && !view.walkforwardSummary) {
+                view.walkforwardSummary = json.walkforwardSummary;
+              }
+              return view;
+            }
+          } catch (e) {}
+        }
+        try {
+          const fb = JSON.parse(document.getElementById('ONTOLOGY_FALLBACK_DATA').textContent || '{}');
+          if (fb && fb.globalMonitors) return fb;
+        } catch (e) {}
+        return null;
+      }
+
+      function renderAll(data) {
+        if (!data) return;
+        currentState = data;
+
+        const ts = data.generatedAt ? new Date(data.generatedAt).toLocaleString('ko-KR') : '-';
+        document.getElementById('updatedAtLabel').textContent = `갱신 ${ts}`;
+
+        const reg = data.macroRegimeSummary || {};
+        const qInfo = QUADRANT_KO[reg.quadrant] || {
+          short: String(reg.quadrant || '거시 감시').replace(/_/g, ' '),
+          detail: '글로벌 거시 레짐',
+        };
+        const rText = REGIME_KO[reg.regime] || String(reg.regime || '선별적 대기').replace(/_/g, ' ');
+        const certPct = reg.certainty ? `${(reg.certainty * 100).toFixed(0)}%` : '-';
+        document.getElementById('macroRegimeTitle').textContent = `${qInfo.short} · ${rText}`;
+        document.getElementById('macroRegimeMeta').textContent =
+          `사분면: ${qInfo.detail} · 레짐 확신도 ${certPct}`;
+        document.getElementById('macroRegimeThesis').textContent =
+          reg.thesis || '글로벌 외환, 원자재, 중앙은행, 지정학 데이터를 긴 호흡으로 감시하며 확실한 추세 구간에서만 집행합니다.';
+
+        const stats = data.vectorDbStats || {};
+        const cad = data.cadencePolicy || {};
+        document.getElementById('systemStatsRow').innerHTML = `
+          <div><dt>누적 벡터 문서 (384차원)</dt><dd class="mono">${(stats.totalDocuments || 0).toLocaleString('ko-KR')}건</dd></div>
+          <div><dt>과거 수익률 복기 표본</dt><dd class="mono">${(stats.totalOutcomePairs || 0).toLocaleString('ko-KR')}건</dd></div>
+          <div><dt>뉴스 및 커뮤니티 수집 주기</dt><dd class="mono">${cad.fastNewsIntervalMin || 15}분 / ${cad.deepCommunityVipIntervalMin || 45}분</dd></div>
+          <div><dt>목표 보유 호흡</dt><dd class="mono">${esc(cad.targetHoldHorizonDays || '5~25일')}</dd></div>
+        `;
+
+        const signals = Array.isArray(data.signalsByAsset) ? data.signalsByAsset : [];
+        if (!selectedKey && signals.length > 0) {
+          selectedKey = `${signals[0].assetClass}:${signals[0].symbol}`;
+        }
+
+        const books = [
+          { key: 'KR_STOCK', label: '국내 KRX 실물 ETF' },
+          { key: 'US_STOCK', label: '미국 주식 및 원자재 ETF' },
+          { key: 'CRYPTO', label: '디지털자산 (빗썸)' },
+        ];
+        document.getElementById('topBookDecisions').innerHTML = books.map((b) => {
+          const top = signals.find((s) => s.assetClass === b.key);
+          if (!top) {
+            return `
+              <div class="book-row">
+                <div>
+                  <div class="book-cat">${b.label}</div>
+                  <div class="book-asset">신호 대기</div>
+                </div>
+                <div class="book-right">
+                  <span class="stance-tag stance-wait"><span class="stance-swatch"></span>현금 및 단기채 방어</span>
+                </div>
+              </div>
+            `;
+          }
+          const st = STANCE_KO[top.stance] || STANCE_KO.NEUTRAL;
+          const k = `${top.assetClass}:${top.symbol}`;
+          const isSel = selectedKey === k;
+          return `
+            <button type="button" class="book-row" aria-pressed="${isSel ? 'true' : 'false'}" data-select-asset="${esc(k)}">
+              <div>
+                <div class="book-cat">${b.label}</div>
+                <div class="book-asset">${esc(top.labelKo)} <span class="mono">(${esc(top.symbol)})</span></div>
+              </div>
+              <div class="book-right">
+                <span class="stance-tag ${st.cls}"><span class="stance-swatch"></span>${st.text}</span>
+                <span class="book-metrics mono">점수 ${top.compositeScore >= 0 ? '+' : ''}${top.compositeScore.toFixed(2)} / 기대 ${top.expectedNetBps >= 0 ? '+' : ''}${top.expectedNetBps} bps</span>
+              </div>
+            </button>
+          `;
+        }).join('');
+
+        const coreCodes = ['DXY', 'KRW', 'JPY', 'OIL', 'GOLD', 'SILVER', 'COPPER', 'NATGAS'];
+        const monitors = (data.globalMonitors || []).filter((m) => coreCodes.includes(m.code));
+        document.getElementById('globalMonitorGrid').innerHTML = monitors.map((m) => {
+          const sc = Number(m.combinedOutlookScore || 0);
+          const badgeCls = sc >= 0.18 ? 'stance-buy' : (sc <= -0.18 ? 'stance-veto' : 'stance-wait');
+          const r20 = Number(m.ret20dPct);
+          const r20Str = Number.isFinite(r20) ? `20일 ${r20 >= 0 ? '+' : ''}${r20.toFixed(1)}%` : '집계 중';
+          const pxDigits = m.code === 'KRW' || m.code === 'JPY' ? 1 : 2;
+          const driverText = m.topDriver ? m.topDriver.title : '특이 충격 없음, 기존 추세 유지';
+          return `
+            <div class="mon-cell">
+              <div class="mon-head">
+                <span>${esc(m.labelKo)}</span>
+                <span class="mono">${esc(r20Str)}</span>
+              </div>
+              <div class="mon-value">${m.level !== null ? fmtNum(m.level, pxDigits) : '-'}<span class="mon-unit">${esc(m.unit || '')}</span></div>
+              <div class="mon-status-row">
+                <span class="stance-tag ${badgeCls}"><span class="stance-swatch"></span>${esc(m.outlookLabel)}</span>
+              </div>
+              <div class="mon-driver" title="${esc(driverText)}">${esc(driverText)}</div>
+            </div>
+          `;
+        }).join('');
+
+        const topSignals = signals.slice(0, 10);
+        document.getElementById('symbolSelectorTabs').innerHTML = topSignals.map((s) => {
+          const k = `${s.assetClass}:${s.symbol}`;
+          const isSel = selectedKey === k;
+          return `<button type="button" class="sym-tab" aria-pressed="${isSel ? 'true' : 'false'}" data-select-asset="${esc(k)}">${esc(s.labelKo)} <span class="mono">(${esc(s.symbol)})</span></button>`;
+        }).join('');
+
+        document.querySelectorAll('[data-select-asset]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            selectedKey = btn.getAttribute('data-select-asset');
+            renderAll(currentState);
+          });
+        });
+
+        renderDecisionFlow(signals.find((s) => `${s.assetClass}:${s.symbol}` === selectedKey) || topSignals[0]);
+        renderNarratives(data.activeNarratives || []);
+        renderWalkForward(data.walkforwardSummary || null);
+      }
+
+      function renderDecisionFlow(sig) {
+        const verdictBox = document.getElementById('verdictSummaryBox');
+        const flowBox = document.getElementById('decisionFlowBoxes');
+        if (!sig) {
+          verdictBox.innerHTML = '<p class="empty-msg">현재 강한 온톨로지 충격이 포착된 종목이 없습니다. 단기채 및 현금 방어 모드로 대기합니다.</p>';
+          flowBox.innerHTML = '<li class="causal-step"><div><h3 class="step-heading">관망 대기</h3><p class="empty-msg">유의미한 인과 충격 발생 시 즉시 경로가 표시됩니다.</p></div></li>';
+          return;
+        }
+        const evs = sig.supportingEvents || [];
+        const an = sig.analogSummary || { count: 0, topAnalogs: [] };
+        const st = STANCE_KO[sig.stance] || STANCE_KO.NEUTRAL;
+        const pathParts = String(sig.causalPathKo || `${sig.labelKo} 직접 연결`).split(/\s*→\s*/);
+
+        verdictBox.innerHTML = `
+          <div class="verdict-title">${esc(sig.labelKo)} <span class="mono">(${esc(sig.symbol)})</span></div>
+          <span class="stance-tag ${st.cls}"><span class="stance-swatch"></span>${st.text}</span>
+          <dl class="verdict-dl">
+            <div><dt>종합 알파 점수</dt><dd class="mono">${sig.compositeScore >= 0 ? '+' : ''}${sig.compositeScore.toFixed(3)}</dd></div>
+            <div><dt>수수료 차감 순기대</dt><dd class="mono ${sig.expectedNetBps >= 0 ? 'pos' : 'neg'}">${sig.expectedNetBps >= 0 ? '+' : ''}${sig.expectedNetBps} bps</dd></div>
+            <div><dt>확신도 보정</dt><dd class="mono">${sig.convictionDelta >= 0 ? '+' : ''}${(sig.convictionDelta * 100).toFixed(1)}%p</dd></div>
+            <div><dt>운용 보유 호흡</dt><dd class="mono">5~25일 추세 추종</dd></div>
+          </dl>
+        `;
+
+        flowBox.innerHTML = `
+          <li class="causal-step">
+            <div>
+              <h3 class="step-heading">수집된 원문 뉴스 및 당국자 발언</h3>
+              <div class="evidence-list">
+                ${evs.length > 0 ? evs.slice(0, 3).map((e) => `
+                  <div class="evidence-row">
+                    <div class="evidence-meta">
+                      <span>${esc(e.authorityLabel || e.source)}</span>
+                    </div>
+                    <div>${esc(e.title)}</div>
+                  </div>
+                `).join('') : '<p class="empty-msg">직접 연결된 신규 헤드라인 대기 중</p>'}
+              </div>
+            </div>
+          </li>
+
+          <li class="causal-step">
+            <div>
+              <h3 class="step-heading">벡터DB 유사 과거사례 복기</h3>
+              ${an.count > 0 ? `
+                <p class="section-note">
+                  유사 사건 <strong class="mono">${an.count}건</strong> 참조 (평균 유사도 <strong class="mono">${((an.meanSimilarity || 0) * 100).toFixed(0)}%</strong>, 과거 승률 <strong class="mono">${((an.winRate || 0) * 100).toFixed(0)}%</strong>, 기대 초과수익 <strong class="mono ${(an.expectedAbnBps || 0) >= 0 ? 'pos' : 'neg'}">${(an.expectedAbnBps || 0) >= 0 ? '+' : ''}${an.expectedAbnBps} bps</strong>)
+                </p>
+                <div class="evidence-list">
+                  ${(an.topAnalogs || []).map((a) => `
+                    <div class="evidence-row">
+                      <div class="evidence-meta mono">
+                        <span>${esc(a.date)} (유사도 ${(a.similarity * 100).toFixed(0)}%)</span>
+                        <span class="${a.realizedAbnBps >= 0 ? 'pos' : 'neg'}">${a.realizedAbnBps >= 0 ? '+' : ''}${a.realizedAbnBps} bps</span>
+                      </div>
+                      <div>${esc(a.title)}</div>
+                    </div>
+                  `).join('')}
+                </div>
+              ` : '<p class="empty-msg">과거 동일 벡터 사례 희소 구간으로 온톨로지 인과 그래프 구조 추론을 우선 적용합니다.</p>'}
+            </div>
+          </li>
+
+          <li class="causal-step">
+            <div>
+              <h3 class="step-heading">온톨로지 인과 그래프 전파 경로</h3>
+              <div class="hop-flow">
+                ${pathParts.map((p, idx) => `
+                  ${idx > 0 ? '<span class="hop-sep" aria-hidden="true">/</span>' : ''}
+                  <span class="hop-node">${esc(p)}</span>
+                `).join('')}
+              </div>
+            </div>
+          </li>
+        `;
+      }
+
+      function renderNarratives(list) {
+        const el = document.getElementById('narrativeList');
+        if (!list.length) {
+          el.innerHTML = '<p class="empty-msg">수집된 거시 테마 클러스터가 아직 없습니다.</p>';
+          return;
+        }
+        el.innerHTML = list.slice(0, 7).map((n) => {
+          const imp = Number(n.netImpulse || 0);
+          const cls = imp >= 0.1 ? 'pos' : (imp <= -0.1 ? 'neg' : '');
+          const sample = n.sampleHeadlines?.[0]?.title || '';
+          return `
+            <div class="cluster-row">
+              <div class="cluster-main">
+                <div class="cluster-title">[${esc(n.category)}] ${esc(n.labelKo)} <span class="mono">(${n.articleCount}건)</span></div>
+                <div class="cluster-sample">${esc(sample)}</div>
+              </div>
+              <div class="mono ${cls}">${imp >= 0 ? '+' : ''}${imp.toFixed(2)}</div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      function renderWalkForward(wf) {
+        const el = document.getElementById('walkforwardBox');
+        if (!wf || (!wf.trackA && !wf.trackB && !wf.trackC)) {
+          el.innerHTML = '<p class="empty-msg">워크포워드 검증 리포트 로드 중…</p>';
+          return;
+        }
+
+        let html = '';
+        if (wf.trackC && wf.trackC.macroOntologyHybridV54) {
+          const tc = wf.trackC;
+          const rows = [
+            ['S&P 500 벤치마크 (^GSPC)', tc.sp500Benchmark, false],
+            ['순수 가격 추세 단독 (뉴스 미반영)', tc.priceTrendOnly, false],
+            ['Steward v5.4 (거시 8축 + 벡터DB + 온톨로지)', tc.macroOntologyHybridV54, true],
+          ];
+          html += `
+            <div class="wf-block">
+              <div class="wf-caption">${esc(tc.trackName)}</div>
+              <div class="table-wrap">
+                <table class="ledger-table">
+                  <thead>
+                    <tr>
+                      <th scope="col">포트폴리오 전략</th>
+                      <th scope="col" class="r-col">누적 수익</th>
+                      <th scope="col" class="r-col">연환산(CAGR)</th>
+                      <th scope="col" class="r-col">샤프지수</th>
+                      <th scope="col" class="r-col">최대낙폭</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${rows.map(([name, m, hi]) => {
+                      const tot = Number(m?.totalReturnPct || 0);
+                      return `
+                        <tr class="${hi ? 'row-featured' : ''}">
+                          <td>${esc(name)}</td>
+                          <td class="r-col mono ${tot >= 0 ? 'pos' : 'neg'}">${tot >= 0 ? '+' : ''}${fmtNum(tot, 2)}%</td>
+                          <td class="r-col mono ${(m?.cagrPct || 0) >= 0 ? 'pos' : 'neg'}">${(m?.cagrPct || 0) >= 0 ? '+' : ''}${fmtNum(m?.cagrPct || 0, 2)}%</td>
+                          <td class="r-col mono">${fmtNum(m?.sharpeAnnualized || 0, 2)}</td>
+                          <td class="r-col mono neg">${fmtNum(m?.maxDrawdownPct || 0, 2)}%</td>
+                        </tr>
+                      `;
+                    }).join('')}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          `;
+        }
+
+        const labels = {
+          keywordLexicon: '단순 키워드 감성',
+          vectorKnnOnly: '벡터DB 유사사례 단독',
+          staticOntologyOnly: '정적 온톨로지 단독',
+          hybridFull: 'Steward v5.4 통합 엔진',
+        };
+
+        const renderEventTrack = (t) => `
+          <div class="wf-block">
+            <div class="wf-caption">
+              ${esc(t.trackName)}
+              ${t.rejectedNaiveCandidates ? ` (함정 ${t.rejectedNaiveCandidates.toLocaleString('ko-KR')}건 차단, 평균 ${t.rejectedNaiveMeanNetBps} bps 손실 회피)` : ''}
+            </div>
+            <div class="table-wrap">
+              <table class="ledger-table">
+                <thead>
+                  <tr>
+                    <th scope="col">단일 이벤트 판별 모델</th>
+                    <th scope="col" class="r-col">거래수</th>
+                    <th scope="col" class="r-col">승률</th>
+                    <th scope="col" class="r-col">건당 순기대</th>
+                    <th scope="col" class="r-col">최대낙폭</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${Object.entries(labels).map(([k, name]) => {
+                    const m = t.models?.[k] || {};
+                    const isBest = k === 'hybridFull';
+                    const bps = Number(m.meanNetRetBps ?? m.meanNetAbnBps ?? 0);
+                    return `
+                      <tr class="${isBest ? 'row-featured' : ''}">
+                        <td>${esc(name)}</td>
+                        <td class="r-col mono">${m.nTrades ?? 0}</td>
+                        <td class="r-col mono">${fmtNum(m.absWinRatePct ?? m.winRatePct ?? 0, 1)}%</td>
+                        <td class="r-col mono ${bps >= 0 ? 'pos' : 'neg'}">${bps >= 0 ? '+' : ''}${fmtNum(bps, 1)} bps</td>
+                        <td class="r-col mono neg">${fmtNum(m.maxDrawdownPct ?? 0, 2)}%</td>
+                      </tr>
+                    `;
+                  }).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        `;
+
+        if (wf.trackB?.models) html += renderEventTrack(wf.trackB);
+        if (wf.trackA?.models) html += renderEventTrack(wf.trackA);
+        el.innerHTML = html;
+      }
+
+      const AUTO_REFRESH_SEC = 60;
+      let nextRefreshLeft = AUTO_REFRESH_SEC;
+      let refreshInFlight = false;
+
+      async function boot() {
+        if (refreshInFlight) return;
+        refreshInFlight = true;
+        const badge = document.getElementById('autoRefreshBadge');
+        if (badge) badge.textContent = '동기화 중…';
+        try {
+          const data = await fetchLatestView();
+          if (data) renderAll(data);
+        } finally {
+          refreshInFlight = false;
+          nextRefreshLeft = AUTO_REFRESH_SEC;
+          if (badge) badge.textContent = `자동갱신 ${nextRefreshLeft}s`;
+        }
+      }
+
+      document.getElementById('manualRefreshBtn').addEventListener('click', () => boot());
+
+      boot();
+      setInterval(() => {
+        nextRefreshLeft -= 1;
+        const badge = document.getElementById('autoRefreshBadge');
+        if (nextRefreshLeft <= 0) {
+          boot();
+        } else if (badge && !refreshInFlight) {
+          badge.textContent = `자동갱신 ${nextRefreshLeft}s`;
+        }
+      }, 1000);
+
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') boot();
+      });
+      window.addEventListener('online', () => boot());
+    })();
+  </script>
+</body>
+</html>

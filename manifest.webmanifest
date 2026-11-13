@@ -1,0 +1,18 @@
+{
+  "name": "STEWARD QUANT · SOTA 멀티에셋 자산관리",
+  "short_name": "Steward Quant",
+  "description": "국내주식 · 미국주식 · 가상자산 3대 자산을 S&P 500 상회 SOTA 퀀트 엔진으로 통합 관리하는 자산배분 SaaS",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#06090F",
+  "theme_color": "#06090F",
+  "lang": "ko",
+  "icons": [
+    {
+      "src": "./favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
